@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.App {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0e1b2e, #1e1a38);
+
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: purple rgba(128, 0, 128, 0.1);
+}
+
+body,
+.App,
+.welcome-heading,
+.messages-container .message,
+.input-container input,
+.input-container button {
+  color: #f4f4f4;
+}

@@ -11,7 +11,7 @@ const ChatInterface = () => {
   const audioChunks = useRef([]);
   const mediaRecorder = useRef(null);
   useEffect(() => {
-    const socket = io('http://localhost:8000/onboarding');
+    const socket = io(import.meta.env.VITE_SERVICE_URL);
     setSocket(socket);
   }, []);
 

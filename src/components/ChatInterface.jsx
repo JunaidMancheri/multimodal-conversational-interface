@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { SpeakerIcon, SendIcon } from 'lucide-react';
+import { MicIcon, SendIcon } from 'lucide-react';
 import '../styles/ChatInterface.css';
 import { io } from 'socket.io-client';
 import GlassmorphicSpinner from './Spinner';
@@ -10,15 +10,55 @@ const ChatInterface = () => {
   const [inputText, setInputText] = useState('');
   const [socket, setSocket] = useState(null);
   const [msgLoading, setMsgLoading] = useState(true);
-  const [speakAloud, setSpeakAloud] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
 
   const audioChunks = useRef([]);
   const mediaRecorder = useRef(null);
+  const currentAudioRef = useRef(null);
+  const isSpaceDownRef = useRef(false);
+
   useEffect(() => {
     const socket = io(import.meta.env.VITE_SERVICE_URL);
     setSocket(socket);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (
+        e.code === 'Space' &&
+        document.activeElement !== document.querySelector('input') &&
+        !isRecording &&
+        !isSpaceDownRef.current
+      ) {
+        e.preventDefault();
+        isSpaceDownRef.current = true;
+        startRecording();
+      }
+    };
+
+    const handleKeyUp = e => {
+      if (e.code === 'Space' && isRecording && isSpaceDownRef.current) {
+        e.preventDefault();
+        isSpaceDownRef.current = false;
+        stopRecording();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isRecording]);
+
+  function stopSpeakAloud() {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current = null;
+    }
+  }
 
   useEffect(() => {
     if (socket) {
@@ -32,20 +72,30 @@ const ChatInterface = () => {
       });
 
       socket.on('tts', async arrayBuffer => {
-        speakAloud?.pause();
+        stopSpeakAloud();
         const blob = new Blob([arrayBuffer], { type: 'audio/mp3' });
         const audio = new Audio(URL.createObjectURL(blob));
-        audio
-          .play()
-          .then(valu => console.log(valu))
-          .catch(err => console.log(err));
-        setSpeakAloud(audio);
+        currentAudioRef.current = audio;
+
+        try {
+          await audio.play();
+        } catch (error) {
+          console.error('Error playing audio:', error);
+        } finally {
+          audio.onended = () => {
+            if (currentAudioRef.current === audio) {
+              currentAudioRef.current = null;
+            }
+          };
+        }
       });
 
       socket.on('transcribe', msg => {
+        setMsgLoading(true);
         setMessages(prevMessages => [
           ...prevMessages,
           { text: msg, sender: 'user' },
+          { sender: 'ai' },
         ]);
       });
     }
@@ -72,6 +122,7 @@ const ChatInterface = () => {
   };
 
   const startRecording = async () => {
+    stopSpeakAloud();
     setIsRecording(true);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder.current = new MediaRecorder(stream);
@@ -95,12 +146,9 @@ const ChatInterface = () => {
 
       reader.onloadend = () => {
         const buffer = new Uint8Array(reader.result);
-        socket.emit('audio', buffer); // Send buffer to backend
+        socket.emit('audio', buffer);
       };
-
       reader.readAsArrayBuffer(blob);
-
-      // Reset audio chunks
       audioChunks.current = [];
     };
   };
@@ -146,7 +194,7 @@ const ChatInterface = () => {
               onTouchStart={startRecording}
               onTouchEnd={stopRecording}
             >
-              <SpeakerIcon />
+              <MicIcon />
             </button>
           )}
         </div>

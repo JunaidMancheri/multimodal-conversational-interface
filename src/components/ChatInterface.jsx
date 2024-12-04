@@ -4,6 +4,7 @@ import '../styles/ChatInterface.css';
 import { io } from 'socket.io-client';
 import GlassmorphicSpinner from './Spinner';
 import VoiceRecordingIndicator from './VoiceRecording';
+import { toast } from 'react-toastify';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
@@ -70,7 +71,14 @@ const ChatInterface = () => {
       });
 
       socket.on('events', event => {
+        console.log(event)
         if (event == 'session_end') {
+        }
+
+        if (event == 'error_transcribing') {
+          toast.info(
+            'There was error transcribing your voice Please make sure you have given proper mic access'
+          );
         }
       });
 
@@ -181,6 +189,16 @@ const ChatInterface = () => {
           <VoiceRecordingIndicator isRecording={isRecording} />
         </div>
       )}
+      <div
+        style={{
+          color: 'gray',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'baseline',
+        }}
+      >
+        <small>Press and hold space bar or the mic to record</small>
+      </div>
       <div className='input-container'>
         <div className='text-input-group'>
           <input

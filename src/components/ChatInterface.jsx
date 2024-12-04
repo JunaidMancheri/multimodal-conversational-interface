@@ -9,7 +9,6 @@ const ChatInterface = () => {
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
   const [inputText, setInputText] = useState('');
   const [socket, setSocket] = useState(null);
-  const [msgLoading, setMsgLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
 
   const audioChunks = useRef([]);
@@ -63,12 +62,16 @@ const ChatInterface = () => {
   useEffect(() => {
     if (socket) {
       socket.on('welcome', msg => {
-        setMsgLoading(false);
         setMessages(() => [{ text: msg, sender: 'ai' }]);
       });
 
       socket.on('ai', msg => {
         receiveSocketMessage(msg);
+      });
+
+      socket.on('events', event => {
+        if (event == 'session_end') {
+        }
       });
 
       socket.on('tts', async arrayBuffer => {
@@ -91,7 +94,6 @@ const ChatInterface = () => {
       });
 
       socket.on('transcribe', msg => {
-        setMsgLoading(true);
         setMessages(prevMessages => [
           ...prevMessages,
           { text: msg, sender: 'user' },
@@ -102,10 +104,17 @@ const ChatInterface = () => {
   }, [socket]);
 
   function receiveSocketMessage(msg) {
-    setMessages(prevMessages => [
-      ...prevMessages.slice(0, prevMessages.length - 1),
-      { text: msg, sender: 'ai' },
-    ]);
+    setMessages(prevMessages => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+      if (lastMessage.text) {
+        return [...prevMessages, { text: msg, sender: 'ai' }];
+      } else {
+        return [
+          ...prevMessages.slice(0, prevMessages.length - 1),
+          { text: msg, sender: 'ai' },
+        ];
+      }
+    });
   }
 
   const handleSendMessage = () => {
@@ -117,7 +126,6 @@ const ChatInterface = () => {
       setInputText('');
       socket.emit('message', inputText);
       setMessages(prev => [...prev, { sender: 'ai' }]);
-      setMsgLoading(true);
     }
   };
 
@@ -158,7 +166,7 @@ const ChatInterface = () => {
       <div className='messages-container'>
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender}-message`}>
-            {msgLoading && !msg.text ? <GlassmorphicSpinner /> : msg.text}
+            {!msg.text ? <GlassmorphicSpinner /> : msg.text}
           </div>
         ))}
       </div>
@@ -173,7 +181,6 @@ const ChatInterface = () => {
           <VoiceRecordingIndicator isRecording={isRecording} />
         </div>
       )}
-
       <div className='input-container'>
         <div className='text-input-group'>
           <input

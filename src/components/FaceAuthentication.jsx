@@ -1,10 +1,13 @@
 import { Modal } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { io } from 'socket.io-client';
+import UserContext from '../contexts/UserContext';
+import DeviceInfoContext from '../contexts/DeviceInfoContext';
+import { toast } from 'react-toastify';
 
-export function FaceAuthentication({ open, onClose }) {
+export function FaceAuthentication({ open, onClose, email }) {
   return (
     <>
       <Modal
@@ -14,7 +17,7 @@ export function FaceAuthentication({ open, onClose }) {
         okText='Capture'
         destroyOnClose={true}
       >
-        <WebCam />
+        <WebCam email={email} />
       </Modal>
     </>
   );
@@ -22,7 +25,9 @@ export function FaceAuthentication({ open, onClose }) {
 
 export default FaceAuthentication;
 
-const WebCam = () => {
+const WebCam = ({ email }) => {
+  const { setIsLoggedIn } = useContext(UserContext);
+  const {machineId} = useContext(DeviceInfoContext);
   const [message, setMessage] = useState('Please show your face to the camera');
   const navigate = useNavigate();
   const webcamRef = useRef(null);
@@ -33,6 +38,8 @@ const WebCam = () => {
     socket.current.on('events', event => {
       if (event == 'success') {
         setMessage('Authentication Successful');
+        setIsLoggedIn(true);
+        toast.success('Authentication Successfull')
         setTimeout(() => navigate('/profile'), 800);
       } else {
       }
@@ -48,7 +55,11 @@ const WebCam = () => {
     const capturedImage = webcamRef.current.getScreenshot();
     if (socket.current) {
       setMessage('Verifying...');
-      socket.current.emit('authenticate', capturedImage);
+      socket.current.emit('authenticate', {
+        email,
+        machineId,
+        image: capturedImage,
+      });
     }
   }
   return (

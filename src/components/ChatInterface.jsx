@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { MicIcon, SendIcon } from 'lucide-react';
 import '../styles/ChatInterface.css';
 import { io } from 'socket.io-client';
@@ -6,8 +6,14 @@ import GlassmorphicSpinner from './Spinner';
 import VoiceRecordingIndicator from './VoiceRecording';
 import { toast } from 'react-toastify';
 import WebcamModal from './WebcamModal';
+import DeviceInfoContext from '../contexts/DeviceInfoContext';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const ChatInterface = () => {
+  const navigate = useNavigate();
+  const [sessionEnd, setSessionEnd] = useState(false);
+  const { machineId } = useContext(DeviceInfoContext);
   const [webcampModalOpen, setWebcamModalOpen] = useState(false);
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
   const [inputText, setInputText] = useState('');
@@ -20,13 +26,14 @@ const ChatInterface = () => {
   const isSpaceDownRef = useRef(false);
 
   useEffect(() => {
+    if (!machineId) return;
     const socket = io(import.meta.env.VITE_SERVICE_URL + '/onboarding', {
       query: {
-        machineId: 'af',
+        machineId,
       },
     });
     setSocket(socket);
-  }, []);
+  }, [machineId]);
 
   useEffect(() => {
     const handleKeyDown = e => {
@@ -79,6 +86,7 @@ const ChatInterface = () => {
       socket.on('events', event => {
         console.log(event);
         if (event == 'session_end') {
+          setSessionEnd(true);
         }
 
         if (event == 'capture_picture') {
@@ -124,7 +132,7 @@ const ChatInterface = () => {
   function receiveSocketMessage(msg) {
     setMessages(prevMessages => {
       const lastMessage = prevMessages[prevMessages.length - 1];
-      if (lastMessage.text) {
+      if (lastMessage.text || lastMessage.img) {
         return [...prevMessages, { text: msg, sender: 'ai' }];
       } else {
         return [
@@ -187,7 +195,7 @@ const ChatInterface = () => {
   return (
     <>
       <WebcamModal
-      onCapture={onCapture}
+        onCapture={onCapture}
         open={webcampModalOpen}
         onClose={() => setWebcamModalOpen(false)}
       ></WebcamModal>
@@ -196,7 +204,7 @@ const ChatInterface = () => {
           {messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender}-message`}>
               {msg.img ? (
-                <img src={msg.img}></img>
+                <img height={100} width={100} src={msg.img}></img>
               ) : msg.text ? (
                 msg.text
               ) : (
@@ -226,31 +234,44 @@ const ChatInterface = () => {
         >
           <small>Press and hold space bar or the mic to record</small>
         </div>
-        <div className='input-container'>
-          <div className='text-input-group'>
-            <input
-              type='text'
-              value={inputText}
-              onChange={e => setInputText(e.target.value)}
-              placeholder='Type your message...'
-              className={inputText.trim() ? 'has-text' : ''}
-            />
-            {inputText.trim() ? (
-              <button onClick={handleSendMessage}>
-                <SendIcon />
-              </button>
-            ) : (
-              <button
-                onMouseDown={startRecording}
-                onMouseUp={stopRecording}
-                onTouchStart={startRecording}
-                onTouchEnd={stopRecording}
-              >
-                <MicIcon />
-              </button>
-            )}
+
+        {sessionEnd ? (
+          <motion.button
+            onClick={() => navigate('/profile')}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className='onboard-button'
+          >
+            Jump To Dashboard
+          </motion.button>
+        ) : (
+          <div className='input-container'>
+            <div className='text-input-group'>
+              <input
+                type='text'
+                value={inputText}
+                onChange={e => setInputText(e.target.value)}
+                placeholder='Type your message...'
+                className={inputText.trim() ? 'has-text' : ''}
+              />
+              {inputText.trim() ? (
+                <button onClick={handleSendMessage}>
+                  <SendIcon />
+                </button>
+              ) : (
+                <button
+                  onMouseDown={startRecording}
+                  onMouseUp={stopRecording}
+                  onTouchStart={startRecording}
+                  onTouchEnd={stopRecording}
+                >
+                  <MicIcon />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

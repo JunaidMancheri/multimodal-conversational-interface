@@ -22,18 +22,18 @@ function App() {
 
   return (
     <div className='App'>
-      <BrowserRouter>
-        <Routes>
-          <DeviceInfoContext.Provider value={{machineId}}>
+      <DeviceInfoContext.Provider value={{ machineId }}>
+        <BrowserRouter>
+          <Routes>
             <Route path='/' element={<WelcomeScreen />} />
             <Route path='/onboarding' element={<ChatInterface />} />
             <Route
-              path='/profile-completion'
+              path='/profile'
               element={<ProfileCompletionPage />}
             />
-          </DeviceInfoContext.Provider>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </DeviceInfoContext.Provider>
       <ToastContainer />
     </div>
   );

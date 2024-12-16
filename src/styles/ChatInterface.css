@@ -27,7 +27,6 @@
 .user-message {
   background: rgba(117, 83, 166, 0.3);
   color: #f4f4f4;
-  align-self: flex-end;
   margin-left: auto;
 }
 
@@ -72,5 +71,21 @@
 }
 
 .text-input-group button:hover {
+  background-color: #563c82;
+}
+
+.onboard-button {
+  background-color: #7553a6;
+  color: #f4f4f4;
+  border: none;
+  margin-top: 1rem;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.onboard-button:hover {
   background-color: #563c82;
 }

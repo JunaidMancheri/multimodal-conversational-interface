@@ -3,10 +3,12 @@ import '../styles/WelcomeScreen.css';
 import AnimatedBackground from './AnimatedBackground';
 import { useState } from 'react';
 import FaceAuthentication from './FaceAuthentication';
+import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line react/prop-types
-const WelcomeScreen = ({ onStartChat }) => {
+const WelcomeScreen = () => {
   const [faceAuthModalOpen, setFaceAuthModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   function handleLoginClick() {
    setFaceAuthModalOpen(true);
@@ -26,7 +28,7 @@ const WelcomeScreen = ({ onStartChat }) => {
           Hello Human
         </motion.h1>
         <motion.button 
-          onClick={onStartChat}
+          onClick={() => navigate('/onboarding')}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}

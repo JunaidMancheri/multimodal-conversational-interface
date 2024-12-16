@@ -16,7 +16,7 @@ const WelcomeScreen = () => {
   
   return (
     <div className="welcome-container">
-      <FaceAuthentication open={faceAuthModalOpen}/>
+      <FaceAuthentication onClose={()=> setFaceAuthModalOpen(false)} open={faceAuthModalOpen}/>
       <AnimatedBackground />
       <div className="welcome-content">
         <motion.h1 

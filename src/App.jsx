@@ -6,31 +6,35 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FingerPrintJS from '@fingerprintjs/fingerprintjs';
 import ProfileCompletionPage from './components/Profile';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DeviceInfoContext from './contexts/DeviceInfoContext';
 
 function App() {
-  const [isOnboarded, setIsOnboarded] = useState(false);
-
-  const handleStartChat = () => {
-    setIsOnboarded(true);
-  };
-
+  const [machineId, setMachineId] = useState(null);
   useEffect(() => {
     async function loadFingerPrint() {
       const fp = await FingerPrintJS.load();
       const result = await fp.get();
-      console.log(result);
+      setMachineId(result.visitorId);
     }
     loadFingerPrint();
   }, []);
 
   return (
     <div className='App'>
+      <BrowserRouter>
+        <Routes>
+          <DeviceInfoContext.Provider value={{machineId}}>
+            <Route path='/' element={<WelcomeScreen />} />
+            <Route path='/onboarding' element={<ChatInterface />} />
+            <Route
+              path='/profile-completion'
+              element={<ProfileCompletionPage />}
+            />
+          </DeviceInfoContext.Provider>
+        </Routes>
+      </BrowserRouter>
       <ToastContainer />
-      {!isOnboarded ? (
-        <WelcomeScreen onStartChat={handleStartChat} />
-      ) : (
-        <ChatInterface />
-      )}
     </div>
   );
 }

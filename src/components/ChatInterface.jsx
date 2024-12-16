@@ -5,8 +5,10 @@ import { io } from 'socket.io-client';
 import GlassmorphicSpinner from './Spinner';
 import VoiceRecordingIndicator from './VoiceRecording';
 import { toast } from 'react-toastify';
+import WebcamModal from './WebcamModal';
 
 const ChatInterface = () => {
+  const [webcampModalOpen, setWebcamModalOpen] = useState(false);
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
   const [inputText, setInputText] = useState('');
   const [socket, setSocket] = useState(null);
@@ -18,7 +20,11 @@ const ChatInterface = () => {
   const isSpaceDownRef = useRef(false);
 
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_SERVICE_URL);
+    const socket = io(import.meta.env.VITE_SERVICE_URL + '/onboarding', {
+      query: {
+        machineId: 'af',
+      },
+    });
     setSocket(socket);
   }, []);
 
@@ -71,8 +77,12 @@ const ChatInterface = () => {
       });
 
       socket.on('events', event => {
-        console.log(event)
+        console.log(event);
         if (event == 'session_end') {
+        }
+
+        if (event == 'capture_picture') {
+          setWebcamModalOpen(true);
         }
 
         if (event == 'error_transcribing') {
@@ -169,62 +179,80 @@ const ChatInterface = () => {
     };
   };
 
+  function onCapture(imageSrc) {
+    setMessages(prev => [...prev, { img: imageSrc, sender: 'user' }]);
+    socket.emit('image', imageSrc);
+  }
+
   return (
-    <div className='chat-interface'>
-      <div className='messages-container'>
-        {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender}-message`}>
-            {!msg.text ? <GlassmorphicSpinner /> : msg.text}
+    <>
+      <WebcamModal
+      onCapture={onCapture}
+        open={webcampModalOpen}
+        onClose={() => setWebcamModalOpen(false)}
+      ></WebcamModal>
+      <div className='chat-interface'>
+        <div className='messages-container'>
+          {messages.map((msg, index) => (
+            <div key={index} className={`message ${msg.sender}-message`}>
+              {msg.img ? (
+                <img src={msg.img}></img>
+              ) : msg.text ? (
+                msg.text
+              ) : (
+                <GlassmorphicSpinner />
+              )}
+            </div>
+          ))}
+        </div>
+        {isRecording && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <VoiceRecordingIndicator isRecording={isRecording} />
           </div>
-        ))}
-      </div>
-      {isRecording && (
+        )}
         <div
           style={{
+            color: 'gray',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'center',
+            alignItems: 'baseline',
           }}
         >
-          <VoiceRecordingIndicator isRecording={isRecording} />
+          <small>Press and hold space bar or the mic to record</small>
         </div>
-      )}
-      <div
-        style={{
-          color: 'gray',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'baseline',
-        }}
-      >
-        <small>Press and hold space bar or the mic to record</small>
-      </div>
-      <div className='input-container'>
-        <div className='text-input-group'>
-          <input
-            type='text'
-            value={inputText}
-            onChange={e => setInputText(e.target.value)}
-            placeholder='Type your message...'
-            className={inputText.trim() ? 'has-text' : ''}
-          />
-          {inputText.trim() ? (
-            <button onClick={handleSendMessage}>
-              <SendIcon />
-            </button>
-          ) : (
-            <button
-              onMouseDown={startRecording}
-              onMouseUp={stopRecording}
-              onTouchStart={startRecording}
-              onTouchEnd={stopRecording}
-            >
-              <MicIcon />
-            </button>
-          )}
+        <div className='input-container'>
+          <div className='text-input-group'>
+            <input
+              type='text'
+              value={inputText}
+              onChange={e => setInputText(e.target.value)}
+              placeholder='Type your message...'
+              className={inputText.trim() ? 'has-text' : ''}
+            />
+            {inputText.trim() ? (
+              <button onClick={handleSendMessage}>
+                <SendIcon />
+              </button>
+            ) : (
+              <button
+                onMouseDown={startRecording}
+                onMouseUp={stopRecording}
+                onTouchStart={startRecording}
+                onTouchEnd={stopRecording}
+              >
+                <MicIcon />
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

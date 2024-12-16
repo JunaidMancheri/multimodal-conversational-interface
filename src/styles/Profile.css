@@ -1,0 +1,147 @@
+.profile-completion-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #1d1d26;
+  padding: 20px;
+}
+
+.profile-completion-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #292935;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.profile-completion-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-completion-header h2 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.profile-completion-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #3f3f4d;
+  border-radius: 4px;
+  position: relative;
+}
+
+.profile-completion-bar {
+  height: 100%;
+  background-color: #7b61ff;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.profile-completion-percentage {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  color: #7b61ff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-completion-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.id-upload-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.id-upload-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.id-icon {
+  font-size: 36px;
+  color: #7b61ff;
+  margin-bottom: 10px;
+}
+
+.id-upload {
+  width: 100%;
+  max-width: 150px;
+  height: 150px;
+  border: 2px dashed #3f3f4d;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.id-upload:hover {
+  border-color: #7b61ff;
+}
+
+.id-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.upload-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #7b61ff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.upload-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.upload-instructions {
+  text-align: center;
+  color: #a0a0a0;
+  font-size: 14px;
+}
+
+.submit-verification-btn {
+  background-color: #7b61ff;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.submit-verification-btn:disabled {
+  background-color: #444457;
+  cursor: not-allowed;
+}
+
+.submit-verification-btn:hover:not(:disabled) {
+  background-color: #9180ff;
+}

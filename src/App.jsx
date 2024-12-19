@@ -10,9 +10,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import DeviceInfoContext from './contexts/DeviceInfoContext';
 import axios from 'axios';
 import UserContext from './contexts/UserContext';
+import captureLocation from './utils/captureLocation';
 
 function App() {
   const [machineId, setMachineId] = useState(null);
+  const [locationData, setLocationData] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
@@ -25,12 +27,17 @@ function App() {
       );
       setUser(response.data);
     }
+    async function getLocationDetails() {
+      const locDetails = await captureLocation();
+      setLocationData(locDetails);
+    }
+    getLocationDetails();
     loadFingerPrint();
   }, []);
 
   return (
     <div className='App'>
-      <DeviceInfoContext.Provider value={{ machineId }}>
+      <DeviceInfoContext.Provider value={{ machineId, locationData }}>
         <UserContext.Provider value={{user, isLoggedIn, setIsLoggedIn}}>
           <BrowserRouter>
             <Routes>

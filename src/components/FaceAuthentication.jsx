@@ -41,7 +41,9 @@ const WebCam = ({ email }) => {
         setIsLoggedIn(true);
         toast.success('Authentication Successfull')
         setTimeout(() => navigate('/profile'), 800);
-      } else {
+      } else if (event == 'failed') {
+        setMessage('Authentication Failed');
+        toast.info('Authentication Failed');
       }
     });
   }, []);

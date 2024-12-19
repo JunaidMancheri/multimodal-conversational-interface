@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const ChatInterface = () => {
   const navigate = useNavigate();
   const [sessionEnd, setSessionEnd] = useState(false);
-  const { machineId } = useContext(DeviceInfoContext);
+  const { machineId, locationData } = useContext(DeviceInfoContext);
   const [webcampModalOpen, setWebcamModalOpen] = useState(false);
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
   const [inputText, setInputText] = useState('');
@@ -30,6 +30,7 @@ const ChatInterface = () => {
     const socket = io(import.meta.env.VITE_SERVICE_URL + '/onboarding', {
       query: {
         machineId,
+        locationData
       },
     });
     setSocket(socket);

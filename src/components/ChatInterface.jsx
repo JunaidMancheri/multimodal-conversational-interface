@@ -27,14 +27,15 @@ const ChatInterface = () => {
 
   useEffect(() => {
     if (!machineId) return;
+    if (!locationData) return;
     const socket = io(import.meta.env.VITE_SERVICE_URL + '/onboarding', {
       query: {
         machineId,
-        locationData
+        locationData: JSON.stringify(locationData)
       },
     });
     setSocket(socket);
-  }, [machineId]);
+  }, [machineId, locationData]);
 
   useEffect(() => {
     const handleKeyDown = e => {

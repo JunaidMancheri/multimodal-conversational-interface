@@ -29,6 +29,7 @@ function App() {
     }
     async function getLocationDetails() {
       const locDetails = await captureLocation();
+      console.log(locDetails);
       setLocationData(locDetails);
     }
     getLocationDetails();

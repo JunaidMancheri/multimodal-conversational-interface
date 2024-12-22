@@ -17,7 +17,7 @@ const getUserLocation = () => {
       },
       {
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 100000,
         maximumAge: 0,
       }
     );

@@ -98,10 +98,9 @@ const ProfileCompletionPage = () => {
           </div>
         </div>
         <div className='profile-completion-section'>
-          <h3>Government ID Verification</h3>
+          <h3>ID Gallery</h3>
           <div className='id-upload-container'>
             <div className='id-upload-item'>
-              <div className='id-icon'>ID</div>
               <div className='id-upload'>
                 {governmentIds.passport ? (
                   <img
@@ -115,7 +114,6 @@ const ProfileCompletionPage = () => {
               </div>
             </div>
             <div className='id-upload-item'>
-              <div className='id-icon'>ID</div>
               <div className='id-upload'>
                 {governmentIds.pan ? (
                   <img
@@ -129,7 +127,6 @@ const ProfileCompletionPage = () => {
               </div>
             </div>
             <div className='id-upload-item'>
-              <div className='id-icon'>ID</div>
               <div className='id-upload'>
                 {governmentIds.adhaar ? (
                   <img
@@ -150,12 +147,6 @@ const ProfileCompletionPage = () => {
             </p>
             <p>Supported formats: JPG, PNG, PDF (max 5MB each)</p>
           </div>
-          <button
-            className='submit-verification-btn'
-            disabled={profileCompletion < 100}
-          >
-            Submit for Verification
-          </button>
         </div>
       </div>
     </div>

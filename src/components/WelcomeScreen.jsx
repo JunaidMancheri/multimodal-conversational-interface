@@ -61,7 +61,7 @@ const WelcomeScreen = () => {
           transition={{ duration: 0.5 }}
           className='onboard-button'
         >
-          Login
+          {user ? 'Continue to dashboard' : 'Login'}
         </motion.button>
         <motion.button
           onClick={() => navigate('/onboarding')}

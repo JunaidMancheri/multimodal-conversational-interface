@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import UserContext from '../contexts/UserContext';
 import DeviceInfoContext from '../contexts/DeviceInfoContext';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export function FaceAuthentication({ open, onClose, email }) {
   return (
@@ -26,8 +27,8 @@ export function FaceAuthentication({ open, onClose, email }) {
 export default FaceAuthentication;
 
 const WebCam = ({ email }) => {
-  const { setIsLoggedIn } = useContext(UserContext);
-  const {machineId} = useContext(DeviceInfoContext);
+  const { setIsLoggedIn, setUser } = useContext(UserContext);
+  const { machineId } = useContext(DeviceInfoContext);
   const [message, setMessage] = useState('Please show your face to the camera');
   const navigate = useNavigate();
   const webcamRef = useRef(null);
@@ -35,11 +36,16 @@ const WebCam = ({ email }) => {
 
   useEffect(() => {
     socket.current = io(import.meta.env.VITE_SERVICE_URL + '/auth');
-    socket.current.on('events', event => {
+    socket.current.on('events', async event => {
       if (event == 'success') {
+        socket.current.off('events')
         setMessage('Authentication Successful');
         setIsLoggedIn(true);
-        toast.success('Authentication Successfull')
+        toast.success('Authentication Successfull');
+        const response = await axios.get(
+          import.meta.env.VITE_SERVICE_URL + '/machine-id/' + machineId
+        );
+        setUser(response.data);
         setTimeout(() => navigate('/profile'), 800);
       } else if (event == 'failed') {
         setMessage('Authentication Failed');

@@ -4,32 +4,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, rgba(128, 0, 128, 0.1), rgba(128, 0, 128, 0.05));
   overflow: hidden;
+  background-color: transparent;
 }
 
 .welcome-content {
-  z-index: 10;
+  z-index: 100;
   text-align: center;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
   padding: 40px;
   display: flex;
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
 .welcome-heading {
-  color: purple;
   font-size: 3rem;
   margin-bottom: 30px;
 }
 
 .onboard-button {
-  background-color: #7553a6;
+  background-color: rgb(168,127,251);
   color: #f4f4f4;
   border: none;
   margin-top: 0!important;

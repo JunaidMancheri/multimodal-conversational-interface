@@ -9,6 +9,8 @@ import WebcamModal from './WebcamModal';
 import DeviceInfoContext from '../contexts/DeviceInfoContext';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import AnimatedBackground from './AnimatedBackground';
+import Dots from './Dots';
 
 const ChatInterface = () => {
   const navigate = useNavigate();

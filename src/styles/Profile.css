@@ -3,16 +3,17 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #1d1d26;
+  z-index: 10;
   padding: 20px;
 }
 
 .profile-completion-card {
+  z-index: 10;
   width: 100%;
   max-width: 600px;
-  background-color: #292935;
+  border: rgb(46, 60, 81) 1px solid;
+  background-color: #16202de6;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 30px;
 }
 
@@ -40,7 +41,7 @@
 
 .profile-completion-bar {
   height: 100%;
-  background-color: #7b61ff;
+  background-color: #888b94;
   border-radius: 4px;
   transition: width 0.3s ease-in-out;
 }
@@ -49,7 +50,6 @@
   position: absolute;
   top: -20px;
   right: 0;
-  color: #7b61ff;
   font-size: 14px;
   font-weight: 600;
 }
@@ -109,7 +109,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #7b61ff;
+  color: #827e7e;
   font-size: 18px;
   font-weight: 600;
 }
@@ -125,23 +125,4 @@
   font-size: 14px;
 }
 
-.submit-verification-btn {
-  background-color: #7b61ff;
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
 
-.submit-verification-btn:disabled {
-  background-color: #444457;
-  cursor: not-allowed;
-}
-
-.submit-verification-btn:hover:not(:disabled) {
-  background-color: #9180ff;
-}

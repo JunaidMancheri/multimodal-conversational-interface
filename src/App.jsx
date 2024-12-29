@@ -11,6 +11,7 @@ import DeviceInfoContext from './contexts/DeviceInfoContext';
 import axios from 'axios';
 import UserContext from './contexts/UserContext';
 import captureLocation from './utils/captureLocation';
+import Dots from './components/Dots';
 
 function App() {
   const [machineId, setMachineId] = useState(null);
@@ -29,7 +30,6 @@ function App() {
     }
     async function getLocationDetails() {
       const locDetails = await captureLocation();
-      console.log(locDetails);
       setLocationData(locDetails);
     }
     getLocationDetails();
@@ -38,8 +38,9 @@ function App() {
 
   return (
     <div className='App'>
+      <Dots/>
       <DeviceInfoContext.Provider value={{ machineId, locationData }}>
-        <UserContext.Provider value={{user, isLoggedIn, setIsLoggedIn}}>
+        <UserContext.Provider value={{user, setUser, isLoggedIn, setIsLoggedIn}}>
           <BrowserRouter>
             <Routes>
               <Route path='/' element={<WelcomeScreen />} />

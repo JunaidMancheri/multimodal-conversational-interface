@@ -12,7 +12,7 @@ export default function EmailModal({ open, onSubmit, onClose }) {
         onClose={onClose}
         onCancel={onClose}
       >
-        <Input onChange={e => setEmail(e.target.value)}></Input>
+        <Input placeholder='Email Or UID' onChange={e => setEmail(e.target.value)}></Input>
       </Modal>
     </>
   );

@@ -21,9 +21,12 @@ const ProfileCompletionPage = () => {
         import.meta.env.VITE_SERVICE_URL + '/ids/' + user.uid
       );
       const ids = result.data;
-      ids.forEach((id) => {
-        setGovernmentIds(prev => ({...prev, [id.type]: true}));
-      })
+      ids.forEach(id => {
+        setGovernmentIds(prev => ({
+          ...prev,
+          [id.type]: { url: id.url, id: id.id },
+        }));
+      });
       calculateProfileCompletion();
     }
     getIDs();
@@ -47,11 +50,11 @@ const ProfileCompletionPage = () => {
         toast.success(result.data?.msg);
         setGovernmentIds(prevState => ({
           ...prevState,
-          [idType]: true,
+          [idType]: { url: result.data?.url, id: result.data?.id },
         }));
         calculateProfileCompletion();
       } catch (error) {
-        toast.error(error.data?.msg);
+        toast.error(error.response?.data?.msg);
       }
     };
 
@@ -104,7 +107,7 @@ const ProfileCompletionPage = () => {
               <div className='id-upload'>
                 {governmentIds.passport ? (
                   <img
-                    src='https://uxwing.com/verified-symbol-icon/'
+                    src={governmentIds.passport?.url}
                     alt='Passport'
                     className='id-preview'
                   />
@@ -112,12 +115,13 @@ const ProfileCompletionPage = () => {
                   <UploadButton idType='passport' />
                 )}
               </div>
+
             </div>
             <div className='id-upload-item'>
               <div className='id-upload'>
                 {governmentIds.pan ? (
                   <img
-                    src='https://uxwing.com/verified-symbol-icon/'
+                    src={governmentIds.pan?.url}
                     alt='Pan'
                     className='id-preview'
                   />
@@ -130,7 +134,7 @@ const ProfileCompletionPage = () => {
               <div className='id-upload'>
                 {governmentIds.adhaar ? (
                   <img
-                    src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fuxwing.com%2Fverify-icon%2F&psig=AOvVaw0ziJpCcEfWXtFsqCMvU0ba&ust=1734446425846000&source=images&cd=vfe&opi=89978449&ved=2ahUKEwiDqIPKwqyKAxVNTWwGHWCqEU0QjRx6BAgAEBk'
+                    src={governmentIds.adhaar?.url}
                     alt='Adhaar'
                     className='id-preview'
                   />

@@ -11,11 +11,14 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import AnimatedBackground from './AnimatedBackground';
 import Dots from './Dots';
+import UserContext from '../contexts/UserContext';
+import axios from 'axios';
 
 const ChatInterface = () => {
   const navigate = useNavigate();
   const [sessionEnd, setSessionEnd] = useState(false);
   const { machineId, locationData } = useContext(DeviceInfoContext);
+  const {setisLoggedIn, setUser} = useContext(UserContext);
   const [webcampModalOpen, setWebcamModalOpen] = useState(false);
   const [messages, setMessages] = useState([{ sender: 'ai' }]);
   const [inputText, setInputText] = useState('');
@@ -89,9 +92,14 @@ const ChatInterface = () => {
         receiveSocketMessage(msg);
       });
 
-      socket.on('events', event => {
+      socket.on('events', async event => {
         console.log(event);
         if (event == 'session_end') {
+          setisLoggedIn(true);
+          const response = await axios.get(
+            import.meta.env.VITE_SERVICE_URL + '/machine-id/' + machineId
+          );
+          setUser(response.data);
           setSessionEnd(true);
         }
 

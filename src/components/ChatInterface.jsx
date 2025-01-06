@@ -51,6 +51,8 @@ const ChatInterface = () => {
         isSpaceDownRef.current = true;
         startRecording();
       }
+
+      if (e.key == 'Enter') handleSendMessage();
     };
 
     const handleKeyUp = e => {
@@ -68,7 +70,7 @@ const ChatInterface = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isRecording]);
+  }, [isRecording, inputText]);
 
   function stopSpeakAloud() {
     if (currentAudioRef.current) {
@@ -148,6 +150,7 @@ const ChatInterface = () => {
   }
 
   const handleSendMessage = () => {
+    console.log(inputText)
     if (inputText.trim()) {
       setMessages(prevMessages => [
         ...prevMessages,
